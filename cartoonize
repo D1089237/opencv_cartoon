@@ -1,0 +1,32 @@
+import cv2
+import numpy as np
+from google.colab.patches import cv2_imshow
+
+# 读取图像
+image = cv2.imread('IMG_5805.JPG')
+
+# 将图像转换为灰度图像
+gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+# 应用中值滤波来平滑图像，增强卡通效果
+smooth_image = cv2.medianBlur(gray_image, 5)
+
+# 检测图像边缘
+edges = cv2.adaptiveThreshold(smooth_image, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 9, 9)
+
+# 生成彩色版本的卡通图像
+color_cartoon = cv2.bilateralFilter(image, 9, 300, 300)
+
+# 合并边缘和彩色图像
+cartoon_image = cv2.bitwise_and(color_cartoon, color_cartoon, mask=edges)
+
+# 保存卡通风格的图像
+cv2.imwrite('cartoon_output.jpg', cartoon_image)
+
+# 显示原始图像和卡通图像
+cv2_imshow(image)
+cv2_imshow(cartoon_image)
+
+# 等待用户按下任意键后关闭窗口
+cv2.waitKey(0)
+cv2.destroyAllWindows()
